@@ -1,0 +1,6 @@
+source,destination,port,protocol,description
+192.168.10.1,10.10.20.1,22,tcp,"Log collection from clients"
+10.10.20.2,192.168.10.1,22,tcp,"Log analysis in SOC"
+172.16.0.1,192.168.10.65,22,tcp,"SSH access to admin EC"
+172.16.0.1,172.16.0.2,443,tcp,"HTTPS access to admin EP"
+172.16.0.1,172.16.0.3,443,tcp,"HTTPS access to admin Console"

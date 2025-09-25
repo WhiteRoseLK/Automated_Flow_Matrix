@@ -1,0 +1,77 @@
+# === PYTHON ===
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+*.egg
+*.egg-info/
+dist/
+build/
+.eggs/
+pip-wheel-metadata/
+*.manifest
+*.spec
+
+# Environnement virtuel
+venv/
+env/
+ENV/
+.venv/
+.python-version
+
+# Jupyter Notebook
+.ipynb_checkpoints/
+
+# PyInstaller
+*.spec
+
+# Pytest
+.cache/
+.pytest_cache/
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Mypy
+.mypy_cache/
+
+# Profiling
+prof/
+
+# Logs
+*.log
+
+# Django
+*.sqlite3
+db.sqlite3
+
+# Unit test / coverage reports
+htmlcov/
+.tox/
+.coverage
+coverage/
+
+# === VSCode ===
+.vscode/
+.history/
+
+# === OS / Éditeurs ===
+.DS_Store
+Thumbs.db
+desktop.ini
+.idea/
+*.sublime-workspace
+*.sublime-project
+
+# === Autres fichiers temporaires ===
+*.bak
+*.tmp
+*.swp
+*.~*
+
+# Secrets potentiels
+*.env
+.env.*
+secrets.json
