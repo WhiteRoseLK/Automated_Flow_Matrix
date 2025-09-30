@@ -8,7 +8,7 @@ import ipaddress
 # CONFIGURATION
 # ------------------------------
 CSV_FILE = "flows.csv"
-SUBNET_FILE = "cmdb.csv"
+SUBNET_FILE = "cmdb_network.csv"
 INPUT_DIR = "Input"
 CSV_PATH = f"{INPUT_DIR}/{CSV_FILE}"
 SUBNET_PATH = f"{INPUT_DIR}/{SUBNET_FILE}"

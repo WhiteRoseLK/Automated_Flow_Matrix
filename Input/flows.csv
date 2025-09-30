@@ -1,6 +1,6 @@
-source,destination,port,protocol,description
-192.168.10.1,10.10.20.1,22,tcp,"Log collection from clients"
-10.10.20.2,192.168.10.1,22,tcp,"Log analysis in SOC"
-172.16.0.1,192.168.10.65,22,tcp,"SSH access to admin EC"
-172.16.0.1,172.16.0.2,443,tcp,"HTTPS access to admin EP"
-172.16.0.1,172.16.0.3,443,tcp,"HTTPS access to admin Console"
+source_name,source_ip,destination_name,destination_ip,port,protocol,description
+EC-client-A,192.168.10.1,EP-client-A,10.10.20.1,22,tcp,"Log collection from clients"
+Console-client-A,10.10.20.2,EC-client-A,192.168.10.1,22,tcp,"Log analysis in SOC"
+Bastion-1,172.16.0.1,EC-client-A,192.168.10.65,22,tcp,"SSH access to admin EC"
+Bastion-1,172.16.0.1,EP-Client-A,172.16.0.2,443,tcp,"HTTPS access to admin EP"
+Bastion-1,172.16.0.1,Console-client-A,172.16.0.3,443,tcp,"HTTPS access to admin Console"
