@@ -1,4 +1,7 @@
 .ansible/
+YAML_Output/*
+Flow_Matrix/*
+Input/*
 
 # === PYTHON ===
 __pycache__/

@@ -1,31 +1,29 @@
 import csv
+import pandas as pd
+import ipaddress
 import yaml
 from collections import defaultdict
 
-file_direcotry = "Input"
-csv_file = 'flows.csv'
-csv_path = f"{file_direcotry}/{csv_file}"
-output_dir = 'YAML_Output'
+INPUT_DIR = "Input"
+CSV_FILE = 'flows_populated.csv'
+CSV_PATH = f"{INPUT_DIR}/{CSV_FILE}"
+OUTPUT_DIR = 'YAML_Output'
 flux_par_source = defaultdict(list)
 
-# Lecture du CSV
-with open(csv_path, newline='', encoding='utf-8') as f:
-    reader = csv.DictReader(f)
-    for row in reader:
-        flux_par_source[row['source']].append({
-            'destination': row['destination'],
-            'port': int(row['port']),
-            'protocol': row['protocol'],
-            'description': row['description']
-        })
+filter_columns = [
+    'source_name', 'source_ip', 'destination_name', 'destination_ip', 'port', 'protocol', 'description'
+]
+
+df_csv = pd.read_csv(CSV_PATH)
+df_filtered = df_csv.filter(items=filter_columns).sort_values(by=['source_name'])
 
 class IndentDumper(yaml.Dumper):
     def increase_indent(self, flow=False, indentless=False):
         return super(IndentDumper, self).increase_indent(flow, False)
 
 # Génération des fichiers YAML Ansible-friendly
-for source, flux_list in flux_par_source.items():
-    filename = f"{output_dir}/{source}.yml"
+for flux_list in df_filtered.groupby('source_name')[filter_columns].apply(lambda x: x.to_dict(orient='records')):
+    filename = f"{OUTPUT_DIR}/{flux_list[0]['source_name']}.yml"
     with open(filename, 'w', encoding='utf-8') as f:
         yaml.dump(
             {'flows': flux_list},
@@ -36,3 +34,4 @@ for source, flux_list in flux_par_source.items():
             indent=2
         )
     print(f"Fichier créé : {filename}")
+
