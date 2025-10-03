@@ -23,10 +23,10 @@ Prérequis :
 - Flow_Matrix/ : Répertoire des matrices Excel
 """
 
-import pandas as pd
 import os
 import re
 import ipaddress
+import pandas as pd
 
 # ------------------------------
 # CONFIGURATION
@@ -57,15 +57,15 @@ def get_latest_matrix():
     if not os.path.exists(OUTPUT_DIR):
         os.makedirs(OUTPUT_DIR)
         return None
-        
+
     files = [f for f in os.listdir(OUTPUT_DIR) if re.match(EXCEL_FILE_PATTERN, f)]
     if not files:
         return None
-        
+
     def version_key(f):
         m = re.match(EXCEL_FILE_PATTERN, f)
         return int(m.group(1)), int(m.group(2))
-        
+
     files.sort(key=version_key, reverse=True)
     return f"{OUTPUT_DIR}/{files[0]}"
 
@@ -102,7 +102,7 @@ def ip_to_zone(ip, subnet_df):
         ip_addr = ipaddress.ip_address(ip)
     except ValueError:
         return None
-        
+
     for _, row in subnet_df.iterrows():
         network = ipaddress.ip_network(row['sous-reseau'])
         if ip_addr in network:
@@ -133,18 +133,18 @@ def insert_column_after(df, new_col_name, new_col_values, after_col):
 if __name__ == "__main__":
     print("📈 Gestionnaire de matrice de flux avec versioning")
     print("=" * 50)
-    
+
     # Vérification des fichiers requis
     if not os.path.exists(CSV_PATH):
         raise FileNotFoundError(f"❌ Le fichier CSV {CSV_PATH} n'existe pas.")
     if not os.path.exists(SUBNET_PATH):
         raise FileNotFoundError(f"❌ Le fichier de correspondance {SUBNET_PATH} n'existe pas.")
-    
+
     # Chargement des données
     print(f"📈 Chargement de {CSV_PATH}...")
     df_csv = pd.read_csv(CSV_PATH)
     print(f"✅ {len(df_csv)} flux chargés")
-    
+
     print(f"🗂 Chargement de {SUBNET_PATH}...")
     df_subnets = pd.read_csv(SUBNET_PATH)
     print(f"✅ {len(df_subnets)} correspondances réseau chargées")
@@ -164,10 +164,10 @@ df_csv = insert_column_after(df_csv, 'zone_destination', zone_destination, 'dest
 last_excel = get_latest_matrix()
 if last_excel:
     df_excel = pd.read_excel(last_excel)
-    new_excel_name = f"{OUTPUT_DIR}/{next_version(last_excel)}"
+    NEW_EXCEL_NAME = f"{OUTPUT_DIR}/{next_version(last_excel)}"
 else:
     df_excel = pd.DataFrame(columns=df_csv.columns)
-    new_excel_name = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}1.0{OUTPUT_SUFFIX}"
+    NEW_EXCEL_NAME = f"{OUTPUT_DIR}/{OUTPUT_PREFIX}1.0{OUTPUT_SUFFIX}"
 
 # ------------------------------
 # Mise à jour de la matrice
@@ -185,7 +185,9 @@ df_updated = pd.concat([df_excel, new_rows])
 # Supprimer les flux marqués "supprimer" si action existe
 if 'action' in df_csv.columns:
     to_remove = df_csv[df_csv['action'].str.lower() == 'supprimer']
-    df_updated = df_updated[~df_updated.set_index(KEY_COLUMNS).index.isin(to_remove.set_index(KEY_COLUMNS).index)]
+    df_updated = df_updated[
+        ~df_updated.set_index(KEY_COLUMNS).index.isin(to_remove.set_index(KEY_COLUMNS).index)
+        ]
 
 df_updated.reset_index(drop=True, inplace=True)
 
@@ -206,7 +208,9 @@ if 'action' in df_updated.columns:
 # ------------------------------
 # Supprimer l'ancienne ligne "block all" si elle existe
 # ------------------------------
-if 'action' in df_updated.columns and 'source' in df_updated.columns and 'destination' in df_updated.columns:
+if ( 'action' in df_updated.columns and
+     'source' in df_updated.columns and
+     'destination' in df_updated.columns ):
     df_updated = df_updated[~((df_updated['action'].str.lower() == 'block') &
                               (df_updated['source'] == 'any') &
                               (df_updated['destination'] == 'any'))]
@@ -251,5 +255,5 @@ df_updated = df_updated[cols]
 # ------------------------------
 # Export Excel mis à jour
 # ------------------------------
-df_updated.to_excel(new_excel_name, index=False)
-print(f"Matrice mise à jour et enregistrée dans : {new_excel_name}")
+df_updated.to_excel(NEW_EXCEL_NAME, index=False)
+print(f"Matrice mise à jour et enregistrée dans : {NEW_EXCEL_NAME}")

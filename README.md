@@ -13,7 +13,7 @@ FlowMatrix est conçu pour automatiser la gestion des flux réseau à travers pl
 
 ## 📋 Composants principaux
 
-### 🔄 DataPopulation.py
+### 🔄 data_population.py
 **Enrichissement des flux avec la CMDB**
 
 - Lit `flows.csv` (flux de base) et `cmdb_network.csv` (correspondances réseau/zone)
@@ -22,10 +22,10 @@ FlowMatrix est conçu pour automatiser la gestion des flux réseau à travers pl
 - Génère `flows_populated.csv` enrichi
 
 ```bash
-python3 DataPopulation.py
+python3 data_population.py
 ```
 
-### 📤 FluxExporter.py  
+### 📤 flux_exporter.py  
 **Export vers fichiers YAML Ansible**
 
 - Lit `flows_populated.csv`
@@ -34,10 +34,10 @@ python3 DataPopulation.py
 - Format compatible Ansible pour automatisation
 
 ```bash
-python3 FluxExporter.py
+python3 flux_exporter.py
 ```
 
-### 📈 UpdateMatrix.py
+### 📈 update_matrix.py
 **Gestionnaire de matrice Excel avec versioning**
 
 - Met à jour les matrices Excel existantes
@@ -46,7 +46,7 @@ python3 FluxExporter.py
 - Gestion des actions (ajout/suppression/modification)
 
 ```bash
-python3 UpdateMatrix.py
+python3 update_matrix.py
 ```
 
 ### 🔀 Modules/Stormshield/next_hop_calculator.py
@@ -75,9 +75,9 @@ FlowMatrix/
 │   └── Stormshield/
 │       ├── routing_table_FW-1.json     # Table de routage (Ansible)
 │       └── next_hop_calculator.py      # Calculateur next hop
-├── DataPopulation.py          # Script d'enrichissement CMDB
-├── FluxExporter.py            # Export YAML Ansible  
-├── UpdateMatrix.py            # Gestionnaire matrice Excel
+├── data_population.py          # Script d'enrichissement CMDB
+├── flux_exporter.py            # Export YAML Ansible  
+├── update_matrix.py            # Gestionnaire matrice Excel
 └── README.md                  # Cette documentation
 ```
 
@@ -91,7 +91,7 @@ FlowMatrix/
 
 ### 2. Enrichissement avec la CMDB
 ```bash
-python3 DataPopulation.py
+python3 data_population.py
 # → Génère flows_populated.csv avec zones et préfixes
 ```
 
@@ -108,11 +108,11 @@ python3 next_hop_calculator.py
 ### 4. Export multi-format
 ```bash
 # Export YAML pour Ansible
-python3 FluxExporter.py
+python3 flux_exporter.py
 # → Génère des fichiers .yml dans YAML_Output/
 
 # Mise à jour matrice Excel
-python3 UpdateMatrix.py  
+python3 update_matrix.py  
 # → Crée/met à jour Matrix_vX.Y.xlsx dans Flow_Matrix/
 ```
 
@@ -166,16 +166,16 @@ ansible-galaxy collection install stormshield.sns
 ```bash
 # 1. Créer flows.csv avec les nouveaux flux
 # 2. Enrichir avec CMDB
-python3 DataPopulation.py
+python3 data_population.py
 # 3. Exporter pour Ansible
-python3 FluxExporter.py
+python3 flux_exporter.py
 ```
 
 ### Scénario 2: Mise à jour de matrice existante
 ```bash
 # 1. Modifier flows.csv (ajouter colonne 'action' si nécessaire)
 # 2. Mettre à jour la matrice
-python3 UpdateMatrix.py
+python3 update_matrix.py
 # → Nouvelle version créée automatiquement
 ```
 

@@ -16,8 +16,8 @@ Prérequis :
 """
 
 import os
-import pandas as pd
 import ipaddress
+import pandas as pd
 
 # ------------------------------
 # CONFIGURATION
@@ -27,6 +27,7 @@ SUBNET_FILE = "cmdb_network.csv"
 SUBNET_PATH = f"{INPUT_DIR}/{SUBNET_FILE}"
 CSV_FILE = 'flows.csv'
 CSV_PATH = f"{INPUT_DIR}/{CSV_FILE}"
+OUTPUT_FILE = f"{INPUT_DIR}/flows_populated.csv"
 
 # ------------------------------
 # FONCTIONS UTILITAIRES
@@ -64,14 +65,14 @@ def ip_to_zone(ip, subnet_df):
         ip_addr = ipaddress.ip_address(ip)
     except ValueError:
         return None
-    
+
     for _, row in subnet_df.iterrows():
         network = ipaddress.ip_network(row['sous-reseau'])
         if ip_addr in network:
             return row
     return None
 
-def dataPopulation(row):
+def data_population(row, subnets):
     """
     Enrichit une ligne de flux avec les informations de zone et de type
     
@@ -81,15 +82,15 @@ def dataPopulation(row):
     Returns:
         Series: Ligne enrichie avec zones et préfixes de type
     """
-    zone_source = ip_to_zone(row['source_ip'], df_subnets)
-    zone_destination = ip_to_zone(row['destination_ip'], df_subnets)
-    
+    zone_source = ip_to_zone(row['source_ip'], subnets)
+    zone_destination = ip_to_zone(row['destination_ip'], subnets)
+
     # Ajouter le préfixe de type au nom (P_ pour Production, A_ pour Admin, etc.)
     row['source_name'] = f"{zone_source['type'][0]}_{row['source_name']}"
     row['source_zone'] = zone_source['zone']
     row['destination_name'] = f"{zone_destination['type'][0]}_{row['destination_name']}"
     row['destination_zone'] = zone_destination['zone']
-    
+
     return row
 
 # ------------------------------
@@ -99,22 +100,22 @@ def dataPopulation(row):
 if __name__ == "__main__":
     print("🚀 Peuplement des données de flux avec la CMDB")
     print("=" * 50)
-    
+
     # Vérification de l'existence des fichiers
     if not os.path.exists(CSV_PATH):
         raise FileNotFoundError(f"❌ Le fichier CSV {CSV_PATH} n'existe pas.")
     if not os.path.exists(SUBNET_PATH):
         raise FileNotFoundError(f"❌ Le fichier de correspondance {SUBNET_PATH} n'existe pas.")
-    
+
     # Chargement des données
     print(f"📈 Chargement de {CSV_PATH}...")
     df_csv = pd.read_csv(CSV_PATH)
     print(f"✅ {len(df_csv)} flux chargés")
-    
+
     print(f"🗂 Chargement de {SUBNET_PATH}...")
     df_subnets = pd.read_csv(SUBNET_PATH)
     print(f"✅ {len(df_subnets)} correspondances réseau chargées")
-    
+
     # Ajout des colonnes de zone
     print("\n🔧 Préparation des colonnes...")
     df_csv = insert_column_after(df_csv, 'source_zone', None, 'source_ip')
@@ -125,15 +126,14 @@ if __name__ == "__main__":
 
     # Ajout de la colonne Rule_ID
     df_csv.insert(0, 'Rule_ID', rule_ids)
-    
+
     # Enrichissement des données
     print("🔄 Enrichissement des flux avec les informations CMDB...")
-    df_population = df_csv.apply(dataPopulation, axis=1)
-    
+    df_population = df_csv.apply(lambda row: data_population(row, df_subnets), axis=1)
+
     # Sauvegarde
-    output_file = f"{INPUT_DIR}/flows_populated.csv"
-    df_population.to_csv(output_file, index=False)
-    print(f"💾 Fichier sauvegardé : {output_file}")
-    
+    df_population.to_csv(OUTPUT_FILE, index=False)
+    print(f"💾 Fichier sauvegardé : {OUTPUT_FILE}")
+
     print("\n✅ Peuplement terminé avec succès !")
     print(f"Flux traiter : {len(df_population)}")
