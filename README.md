@@ -207,7 +207,3 @@ python3 next_hop_calculator.py
 - Vérifier la connectivité au firewall Stormshield
 - S'assurer que le fichier routing_table_FW-1.json est valide
 - Contrôler les adresses IP dans flows.csv
-
----
-
-**Développé pour l'automatisation des flux réseau en entreprise** 🏢
