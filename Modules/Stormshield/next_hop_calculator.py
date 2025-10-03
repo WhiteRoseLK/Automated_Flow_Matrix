@@ -117,10 +117,9 @@ def find_matching_route(dest_ip, routes):
                 if route['Address'] == '0.0.0.0/0':
                     # Route par défaut correspond à tout
                     return route
-                else:
-                    network = ipaddress.IPv4Network(route['Address'])
-                    if dest_addr in network:
-                        return route
+                network = ipaddress.IPv4Network(route['Address'])
+                if dest_addr in network:
+                    return route
             except ValueError:
                 continue
 
