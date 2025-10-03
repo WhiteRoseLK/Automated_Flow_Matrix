@@ -1,0 +1,5 @@
+sous-reseau,zone,type
+192.168.10.0/26,Enclave_client-A,Prod
+192.168.10.64/26,Enclave_client-A,Admin
+10.10.20.0/24,Collecte,Prod
+172.16.0.0/24,Admin,Admin

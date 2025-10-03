@@ -1,0 +1,109 @@
+- name: Set command for filter rule
+  ansible.builtin.set_fact:
+    stormshield_cmd: >
+      CONFIG FILTER RULE {{ 'UPDATE' if mode == 'update' else 'INSERT' }}
+      index={{ slot }}
+      type={{ type }}
+      global={{ '0' if scope == 'local' else '1' }}
+      state={{ 'off' if rule.state is defined and rule.state == 'off' else 'on' }}
+
+- name: Set stormshield_new_src fact
+  ansible.builtin.set_fact:
+    stormshield_new_src: "{{ rule.src }}"
+
+- name: Set stormshield_new_dst fact
+  ansible.builtin.set_fact:
+    stormshield_new_dst: "{{ rule.dst }}"
+
+- name: Set stormshield_new_dst fact for enclave
+  ansible.builtin.set_fact:
+    stormshield_new_dst: "{{ rule.dst }}-{{ enclave_name }}-01"
+  when: rule.dst_is_enc is defined and true
+
+- name: Set stormshield_filter fact
+  ansible.builtin.set_fact:
+    stormshield_filter:
+      action: "{{ rule.action }}"
+      srctarget: "{{ stormshield_new_src if stormshield_new_src is defined else rule.src }}"
+      dsttarget: "{{ stormshield_new_dst if stormshield_new_dst is defined else rule.dst }}"
+      dstport: "{{ rule.dstport if rule.dstport is defined else 'any' }}"
+      ipproto: "{{ rule.ipproto if rule.ipproto is defined else 'any' }}"
+      inspection: "{{ rule.inspection }}"
+
+- name: Build rule
+  ansible.builtin.set_fact:
+    stormshield_cmd: "{{ stormshield_cmd }} {{ item }}=\"{{ stormshield_filter[item] }}\""
+  when: stormshield_filter[item] is defined
+  loop:
+    - position
+    - name
+    - action
+    - loglevel
+    - noconnlog
+    - count
+    - rate
+    - synproxy
+    - settos
+    - qosid
+    - ackqosid
+    - qosfairness
+    - route
+    - inspection
+    - antivirus
+    - sandboxing
+    - antispam
+    - proxycache
+    - ftpfiltering
+    - urlfiltering
+    - mailfiltering
+    - sslfiltering
+    - fwservice
+    - webportalexcept
+    - inbound
+    - schedule
+    - securityinspection
+    - tos
+    - ipstate
+    - ipproto
+    - icmptype
+    - srcuser
+    - srcusertype
+    - srcuserdomain
+    - srcusermethod
+    - srctarget
+    - srcportop
+    - srcport
+    - srcif
+    - srcgeo
+    - srciprep
+    - srchostrep
+    - srchostrepop
+    - via
+    - dsttarget
+    - dstportop
+    - dstport
+    - dstgeo
+    - dstiprep
+    - dsthostrep
+    - dsthostrepop
+    - natsrctarget
+    - natsrclb
+    - natsrcarp
+    - natsrcportop
+    - natsrcport
+    - natsrcportlb
+    - natdsttarget
+    - natdstlb
+    - natdstarp
+    - natdstportop
+    - natdstport
+    - natdstportlb
+    - beforevpn
+    - enforceipsecforward
+    - enforceipsecreverse
+    - comment
+    - rulename
+
+- name: Append command to stormshield_script
+  ansible.builtin.set_fact:
+    stormshield_script: "{{ stormshield_script | default('') }}{{ stormshield_cmd }}\n"

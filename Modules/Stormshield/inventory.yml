@@ -1,0 +1,11 @@
+---
+sns_appliances:
+  hosts:
+    FW-1:
+      ansible_connection: local
+      force_modify: true
+      appliance:
+        host: 10.0.0.254
+        user: admin
+        password: admin
+        sslverifypeer: false
