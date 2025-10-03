@@ -1,4 +1,4 @@
-![Pylint](https://github.com/WhiteRoseLK/Automated_Flow_Matrix/pylint.json)
+![Pylint](https://img.shields.io/endpoint?url=https://whiterose.fr/Automated_Flow_Matrix/pylint.json)
 
 # FlowMatrix - Gestionnaire de Flux Réseau
 
@@ -207,7 +207,3 @@ python3 next_hop_calculator.py
 - Vérifier la connectivité au firewall Stormshield
 - S'assurer que le fichier routing_table_FW-1.json est valide
 - Contrôler les adresses IP dans flows.csv
-
----
-
-**Développé pour l'automatisation des flux réseau en entreprise** 🏢
