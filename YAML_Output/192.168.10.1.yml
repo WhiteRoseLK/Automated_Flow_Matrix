@@ -1,0 +1,5 @@
+flows:
+  - destination: 10.10.20.1
+    port: 22
+    protocol: tcp
+    description: Log collection from clients

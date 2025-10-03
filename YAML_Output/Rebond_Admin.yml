@@ -1,0 +1,13 @@
+flows:
+  - destination: Enclave_EC_Admin
+    port: 22
+    protocol: tcp
+    description: SSH access to admin EC
+  - destination: Collecte_EP_Admin
+    port: 443
+    protocol: tcp
+    description: HTTPS access to admin EP
+  - destination: Console_Admin
+    port: 443
+    protocol: tcp
+    description: HTTPS access to admin Console

@@ -1,0 +1,5 @@
+flows:
+  - destination: Collecte_EP_Prod
+    port: 22
+    protocol: tcp
+    description: Log collection from clients
