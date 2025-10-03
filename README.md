@@ -1,4 +1,4 @@
-![Pylint](https://github.com/WhiteRoseLK/Automated_Flow_Matrix/pylint.json)
+![Pylint](https://img.shields.io/endpoint?url=https://whiterose.fr/Automated_Flow_Matrix/pylint.json)
 
 # FlowMatrix - Gestionnaire de Flux Réseau
 
