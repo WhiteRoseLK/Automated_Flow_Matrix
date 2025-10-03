@@ -1,5 +1,0 @@
-sous-reseau,zone
-192.168.10.0/26,Enclave_Prod
-192.168.10.64/26,Enclave_Admin
-10.10.20.0/24,Collecte
-172.16.0.0/24,Admin

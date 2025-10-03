@@ -1,0 +1,29 @@
+- name: Set command for separator rule
+  ansible.builtin.set_fact:
+    stormshield_cmd: >
+      CONFIG FILTER RULE ADDSEP
+      index={{ slot }}
+      type={{ type }}
+      global={{ '0' if scope == 'local' else '1' }}
+      color={{ rule.color }}
+      collapse=0
+      position={{ rule.position }}
+
+- name: Set separator comment
+  ansible.builtin.set_fact:
+    stormshield_sep:
+      comment: "{{ rule.comment }}"
+
+- name: Build rule
+  ansible.builtin.set_fact:
+    stormshield_cmd: "{{ stormshield_cmd }} {{ item }}=\"{{ stormshield_sep[item] }}\""
+  when: stormshield_sep[item] is defined
+  loop: "{{ stormshield_sep.keys() | list }}"
+
+- name: Append command to stormshield_script
+  ansible.builtin.set_fact:
+    stormshield_script: "{{ stormshield_script }}{{ stormshield_cmd }}\n"
+
+- name: Append command to stormshield_script (duplicate)
+  ansible.builtin.set_fact:
+    stormshield_script: "{{ stormshield_script }}{{ stormshield_cmd }}\n"
