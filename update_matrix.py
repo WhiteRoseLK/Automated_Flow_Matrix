@@ -13,29 +13,24 @@ Ce script :
 Fonctionnalités :
 - Versioning automatique des matrices
 - Mise à jour incrémentale des flux
-- Enrichissement avec zones réseau
 - Gestion des actions (ajout/suppression)
 - Export Excel automatisé
 
 Prérequis :
 - flows.csv : Fichier source des flux réseau
-- cmdb_network.csv : Table de correspondance IP/Zone
 - Flow_Matrix/ : Répertoire des matrices Excel
 """
 
 import os
 import re
-import ipaddress
 import pandas as pd
 
 # ------------------------------
 # CONFIGURATION
 # ------------------------------
 CSV_FILE = "flows.csv"
-SUBNET_FILE = "cmdb_network.csv"
 INPUT_DIR = "Input"
 CSV_PATH = f"{INPUT_DIR}/{CSV_FILE}"
-SUBNET_PATH = f"{INPUT_DIR}/{SUBNET_FILE}"
 EXCEL_FILE_PATTERN = r"Matrix_v(\d+)\.(\d+)\.xlsx"
 OUTPUT_DIR = "Flow_Matrix"
 OUTPUT_PREFIX = "Matrix_v"
@@ -87,45 +82,6 @@ def next_version(filename):
     else:
         return f"{OUTPUT_PREFIX}1.0{OUTPUT_SUFFIX}"
 
-def ip_to_zone(ip, subnet_df):
-    """
-    Trouve la zone correspondante à une adresse IP
-    
-    Args:
-        ip (str): Adresse IP à analyser
-        subnet_df (DataFrame): DataFrame des correspondances réseau/zone
-        
-    Returns:
-        str: Nom de la zone ou None si non trouvée
-    """
-    try:
-        ip_addr = ipaddress.ip_address(ip)
-    except ValueError:
-        return None
-
-    for _, row in subnet_df.iterrows():
-        network = ipaddress.ip_network(row['sous-reseau'])
-        if ip_addr in network:
-            return row['zone']
-    return None
-
-def insert_column_after(df, new_col_name, new_col_values, after_col):
-    """
-    Insère une nouvelle colonne après une colonne spécifiée
-    
-    Args:
-        df (DataFrame): DataFrame à modifier
-        new_col_name (str): Nom de la nouvelle colonne
-        new_col_values: Valeurs de la nouvelle colonne
-        after_col (str): Nom de la colonne après laquelle insérer
-        
-    Returns:
-        DataFrame: DataFrame modifié
-    """
-    idx = df.columns.get_loc(after_col) + 1
-    df.insert(idx, new_col_name, new_col_values)
-    return df
-
 # ------------------------------
 # TRAITEMENT PRINCIPAL
 # ------------------------------
@@ -137,26 +93,11 @@ if __name__ == "__main__":
     # Vérification des fichiers requis
     if not os.path.exists(CSV_PATH):
         raise FileNotFoundError(f"❌ Le fichier CSV {CSV_PATH} n'existe pas.")
-    if not os.path.exists(SUBNET_PATH):
-        raise FileNotFoundError(f"❌ Le fichier de correspondance {SUBNET_PATH} n'existe pas.")
 
     # Chargement des données
     print(f"📈 Chargement de {CSV_PATH}...")
     df_csv = pd.read_csv(CSV_PATH)
     print(f"✅ {len(df_csv)} flux chargés")
-
-    print(f"🗂 Chargement de {SUBNET_PATH}...")
-    df_subnets = pd.read_csv(SUBNET_PATH)
-    print(f"✅ {len(df_subnets)} correspondances réseau chargées")
-
-# ------------------------------
-# Compléter zone_source et zone_destination
-# ------------------------------
-zone_source = df_csv['source'].apply(lambda ip: ip_to_zone(ip, df_subnets))
-zone_destination = df_csv['destination'].apply(lambda ip: ip_to_zone(ip, df_subnets))
-
-df_csv = insert_column_after(df_csv, 'zone_source', zone_source, 'source')
-df_csv = insert_column_after(df_csv, 'zone_destination', zone_destination, 'destination')
 
 # ------------------------------
 # Lecture matrice Excel existante
@@ -231,26 +172,6 @@ if 'zone_destination' in df_updated.columns:
     block_all_rule['zone_destination'] = 'any'
 
 df_updated = pd.concat([df_updated, pd.DataFrame([block_all_rule])], ignore_index=True)
-
-# ------------------------------
-# Réorganiser les colonnes pour garder l'ordre exact
-# ------------------------------
-cols = df_updated.columns.tolist()
-# ID en 1ère position
-if 'ID' in cols:
-    cols.insert(0, cols.pop(cols.index('ID')))
-# action en 2ème position
-if 'action' in cols:
-    cols.insert(1, cols.pop(cols.index('action')))
-# zone_source après source
-if 'source' in cols and 'zone_source' in cols:
-    idx_source = cols.index('source')
-    cols.insert(idx_source + 1, cols.pop(cols.index('zone_source')))
-# zone_destination après destination
-if 'destination' in cols and 'zone_destination' in cols:
-    idx_dest = cols.index('destination')
-    cols.insert(idx_dest + 1, cols.pop(cols.index('zone_destination')))
-df_updated = df_updated[cols]
 
 # ------------------------------
 # Export Excel mis à jour
