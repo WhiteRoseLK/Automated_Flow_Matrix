@@ -82,16 +82,16 @@
         # Résoudre l'IP de la route par défaut
         default_gateway_name: >
           {{
-            sns_default_route.data.DefaultRoute.IPv4 if (sns_default_route.data is defined and 
-                                                          sns_default_route.data.DefaultRoute is defined and 
+            sns_default_route.data.DefaultRoute.IPv4 if (sns_default_route.data is defined and
+                                                          sns_default_route.data.DefaultRoute is defined and
                                                           sns_default_route.data.DefaultRoute.IPv4)
             else None
           }}
         default_gateway_raw: >
           {{
-            sns_default_gateway_ip.data.Object.0.ip if (sns_default_gateway_ip is defined and 
-                                                        sns_default_gateway_ip.data is defined and 
-                                                        sns_default_gateway_ip.data.Object is defined and 
+            sns_default_gateway_ip.data.Object.0.ip if (sns_default_gateway_ip is defined and
+                                                        sns_default_gateway_ip.data is defined and
+                                                        sns_default_gateway_ip.data.Object is defined and
                                                         sns_default_gateway_ip.data.Object | length > 0)
             else None
           }}
