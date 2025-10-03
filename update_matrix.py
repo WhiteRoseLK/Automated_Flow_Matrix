@@ -79,8 +79,7 @@ def next_version(filename):
         major = int(match.group(1))
         minor = int(match.group(2)) + 1
         return f"{OUTPUT_PREFIX}{major}.{minor}{OUTPUT_SUFFIX}"
-    else:
-        return f"{OUTPUT_PREFIX}1.0{OUTPUT_SUFFIX}"
+    return f"{OUTPUT_PREFIX}1.0{OUTPUT_SUFFIX}"
 
 # ------------------------------
 # TRAITEMENT PRINCIPAL
