@@ -1,3 +1,5 @@
+![Pylint](https://github.com/WhiteRoseLK/Automated_Flow_Matrix/pylint.json)
+
 # FlowMatrix - Gestionnaire de Flux Réseau
 
 Suite d'outils Python pour la gestion, l'analyse et l'automatisation des flux réseau dans un environnement d'entreprise. Ce projet facilite la création de matrices de flux, l'enrichissement avec des données CMDB, et l'export vers des formats utilisables par les outils d'automatisation.
