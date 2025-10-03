@@ -1,4 +1,5 @@
 ![Pylint](https://img.shields.io/endpoint?url=https://whiterose.fr/Automated_Flow_Matrix/pylint.json)
+[![CodeQL Advanced](https://github.com/WhiteRoseLK/Automated_Flow_Matrix/actions/workflows/codeql.yml/badge.svg?branch=main)](https://github.com/WhiteRoseLK/Automated_Flow_Matrix/actions/workflows/codeql.yml)
 
 # FlowMatrix - Gestionnaire de Flux Réseau
 
