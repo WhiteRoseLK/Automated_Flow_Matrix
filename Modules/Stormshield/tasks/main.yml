@@ -1,0 +1,6 @@
+---
+- name: 'Object Configuration'
+  ansible.builtin.include_tasks: object.yml
+
+- name: 'Configure filter rules'
+  ansible.builtin.include_tasks: filter.yml
