@@ -26,7 +26,6 @@ jobs:
         run: |
           SCORE=$(pylint Modules/Stormshield/next_hop_calculator.py --exit-zero | grep "Your code has been rated at" | awk '{print $7}' | cut -d/ -f1)
           COLOR="brightgreen"
-<<<<<<< HEAD
           mkdir -p docs
           echo "{\"schemaVersion\":1,\"label\":\"pylint\",\"message\":\"$SCORE/10\",\"color\":\"$COLOR\"}" > docs/pylint.json
       - name: Commit badge JSON
@@ -36,6 +35,3 @@ jobs:
           git add docs/pylint.json
           git commit -m "Update pylint badge [skip ci]" || echo "No changes"
           git push
-=======
-          echo "{\"schemaVersion\":1,\"label\":\"pylint\",\"message\":\"$SCORE/10\",\"color\":\"$COLOR\"}" > pylint.json
->>>>>>> e4830daf95991e842e373cfa0f0695c87576273d
