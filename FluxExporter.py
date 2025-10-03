@@ -17,9 +17,7 @@ Prérequis :
 - flows_populated.csv : Fichier de flux enrichi par DataPopulation.py
 """
 
-import csv
 import pandas as pd
-import ipaddress
 import yaml
 from collections import defaultdict
 import os
